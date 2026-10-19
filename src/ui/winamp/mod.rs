@@ -951,8 +951,7 @@ fn clutter_bar(app: &mut App, view: &mut View, now: Option<&NowPlaying>) {
 
 /// The full or rolled-up display: the spectrum analyser, the oscilloscope,
 /// or nothing, in the skin's own colours. A click goes to the next.
-/// Only sound from this computer passes the tap; a device across the room
-/// leaves the bars flat. Returns whether anything is still moving.
+/// Returns whether anything is still moving.
 fn visualiser(app: &mut App, view: &mut View, now: Option<&NowPlaying>, area: Area) -> bool {
     if view.interact(area, "visualiser", Sense::click()).clicked() {
         app.actions.push(Action::CycleVisualiser);
@@ -974,7 +973,7 @@ fn visualiser(app: &mut App, view: &mut View, now: Option<&NowPlaying>, area: Ar
         }
     }
     let row_at = |row: u8| u32::from(row) * area.height / u32::from(vis::ROWS);
-    let sounding = now.is_some_and(|now| (now.playing || now.loading) && now.local);
+    let sounding = now.is_some_and(|now| app.sounding(now));
     match mode {
         VisMode::Bars => {
             let samples = if sounding {
